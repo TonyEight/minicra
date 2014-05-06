@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block page-title %}{{ user_display }}'s dashboard{% endblock %}
+
+{% block title %}<h3 class="muted">Hi, {{ user_display }}!</h3>{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <h4>Active contracts</h4>
+    {% if contracts %}    
+    {% for contract in contracts %}
+    <tr>
+      <td>{{ contract.client.organisation }}</td>
+      <td>{{ contract.client }}</td>
+      <td>{{ contract.project }}</td>
+      <td>{{ contract.mission }}</td>
+      <td>{{ contract.start }}</td>
+      <td>{{ contract.end }}</td>
+    </tr>
+    {% endfor %}
+    {% else %}
+    I found no active contracts for you.
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
