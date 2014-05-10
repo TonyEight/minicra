@@ -14,7 +14,7 @@ class Organisation(models.Model):
         verbose_name_plural = _('Organisations')
 
     def __unicode__(self):
-        return self.name
+        return u'%s' % self.name
     
 
 class Client(models.Model):
@@ -36,7 +36,7 @@ class Client(models.Model):
         verbose_name_plural = _('Clients')
 
     def __unicode__(self):
-        return self.name
+        return u'%s' % self.name
 
 
 class Project(models.Model):
@@ -49,7 +49,7 @@ class Project(models.Model):
         verbose_name_plural = _('Projects')
 
     def __unicode__(self):
-        return self.name
+        return u'%s' % self.name
 
 
 class Contract(models.Model):
@@ -91,5 +91,5 @@ class Contract(models.Model):
         verbose_name_plural = _('Contracts')
 
     def __unicode__(self):
-        return '%s - %s' % (self.client.organisation, self.mission)
+        return u'%s - %s' % (self.client.organisation, self.mission)
     

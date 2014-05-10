@@ -87,7 +87,7 @@ class Month(models.Model):
         unique_together = ('month', 'year')
 
     def __unicode__(self):
-        return '%s %s' % (self.get_month_display(), self.year)
+        return u'%s %s' % (self.get_month_display(), self.year)
 
     def save(self, *args, **kwargs):
         c = calendar.Calendar()
