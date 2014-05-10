@@ -24,6 +24,8 @@ class Client(models.Model):
     )
     service = models.CharField(
         max_length=200,
+        blank=True,
+        null=True
     )
     organisation = models.ForeignKey(
         Organisation
@@ -58,7 +60,9 @@ class Contract(models.Model):
         blank=True
     )
     project = models.ForeignKey(
-        Project
+        Project,
+        blank=True,
+        null=True
     )
     client = models.ForeignKey(
         Client
@@ -70,13 +74,16 @@ class Contract(models.Model):
     start = models.DateField(
     )
     end = models.DateField(
-        blank=True
+        blank=True,
+        null=True
     )
     sold_days = models.PositiveIntegerField(
-        blank=True
+        blank=True,
+        null=True
     )
     distribution = models.PositiveIntegerField(
-        blank=True
+        blank=True,
+        null=True
     )
 
     class Meta:
@@ -84,5 +91,5 @@ class Contract(models.Model):
         verbose_name_plural = _('Contracts')
 
     def __unicode__(self):
-        return self.mission
+        return '%s - %s' % (self.client.organisation, self.mission)
     

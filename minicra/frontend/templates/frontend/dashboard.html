@@ -1,27 +1,92 @@
 {% extends 'base.html' %}
+{% load minicra %}
 
-{% block page-title %}{{ user_display }}'s dashboard{% endblock %}
+{% block page-title %}{{ user_display_short }}'s dashboard{% endblock %}
 
-{% block title %}<h3 class="muted">Hi, {{ user_display }}!</h3>{% endblock %}
+{% block title %}<h3 class="muted">Dashboard</h3>{% endblock %}
 
 {% block content %}
 <div class="row">
-  <div class="col-md-12">
-    <h4>Active contracts</h4>
-    {% if contracts %}    
-    {% for contract in contracts %}
-    <tr>
-      <td>{{ contract.client.organisation }}</td>
-      <td>{{ contract.client }}</td>
-      <td>{{ contract.project }}</td>
-      <td>{{ contract.mission }}</td>
-      <td>{{ contract.start }}</td>
-      <td>{{ contract.end }}</td>
-    </tr>
-    {% endfor %}
-    {% else %}
-    I found no active contracts for you.
-    {% endif %}
+  <div class="col-md-9">
+    <div class="row">
+      <div class="col-md-12">{% greetings %}</div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <h4>Your activity on {% now 'F' %}</h4>
+        <p>This month counts <span class="label label-primary">{{ current_month.worked_days }}</span> worked day{{ current_month.worked_days|pluralize }}.{% if reports %} You can declare <a href="{% url 'trace-activity' %}">your days of activity</a> and <a href="#">your holidays</a>.{% endif %}</p>
+        {% if reports %}
+        <ul class="list-group">
+          <li class="list-group-item">
+            <h5 class="list-group-item-heading"><strong>Declared activity</strong></h5>
+            <p class="list-group-item-text">You had declared a total of <span class="label label-primary">{{ days_with_activity|default_if_none:'0'|beautify }}</span> day{{ days_with_activity|default_if_none:'0'|pluralize }} with activity.</p>
+          </li>
+          {% for report in reports %}
+          {% if report.days_with_activity > 0 %}
+          <li class="list-group-item">
+            <em class="list-group-item-text">{{ report.contract }} <span class="label label-default pull-right">{{ report.days_with_activity|beautify }}</span></em>
+          </li>
+          {% endif %}
+          {% endfor %}
+          <li class="list-group-item">
+            <h5 class="list-group-item-heading"><strong>Declared off days</strong></h5>
+            <p class="list-group-item-text">You had declared a total of <span class="label label-primary">{{ offdays|default_if_none:'0'|beautify }}</span> off day{{ offdays|default_if_none:'0'|pluralize }}.</p>
+          </li>
+          {% for report in reports %}
+          {% if report.off_days > 0 %}
+          <li class="list-group-item">
+            <em class="list-group-item-text">{{ report.contract }} <span class="label label-default pull-right">{{ report.off_days|beautify }}</span></em>
+          </li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>You had declared no activity yet.</p>
+        <p>Is it normal? If not, just declare <a href="{% url 'trace-activity' %}">your days of activity</a> or <a href="#">your holidays</a>!</p>
+        {% endif %}
+      </div>
+      <div class="col-md-6">
+        <h4>Your active contracts</h4>
+        {% if contracts %}
+        <ul class="list-group">    
+          {% for contract in contracts %}
+          <li class="list-group-item">
+            <h5 class="list-group-item-heading"><strong>{{ contract.client.organisation }}</strong></h5>
+            <em class="list-group-item-text">{{ contract.client }}</em>
+            <p class="list-group-item-text">
+            {% if contract.project %}
+            {{ contract.project }}: 
+            {% endif %}
+            {{ contract.mission }}
+            </p>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>I found no active contracts for you.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 hidden-xs">
+    {% month_calendar current_month.year current_month.month 'dashboard-calendar' %}
   </div>
 </div>
+{% endblock %}
+
+{% block extra-js %}
+<script type="text/javascript">
+  (function($) {
+    function Timer() {
+      var now = new Date();
+      var sec = now.getSeconds()
+      if (sec < 10){
+        sec = '0' + sec
+      }
+      var h = now.getHours() + ":" + now.getMinutes() + ":" + sec;
+      $('.timer').text(h);
+    }
+    setInterval(Timer, 1000);
+  })(jQuery);
+</script>
 {% endblock %}

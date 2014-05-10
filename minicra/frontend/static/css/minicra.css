@@ -11,6 +11,8 @@ body {
     min-height: 100%;
     height: auto !important;
     height: 100%;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
     margin: 0 auto -60px; /* the bottom margin is the negative value of the footer's height */
 }
 #footer, #push {
@@ -21,6 +23,43 @@ body {
     padding: 1.5em;
     background-color: #ebebeb;
 }
-h3 {
-    padding-bottom: 2em;
+h3,
+.row {
+    margin-bottom: 1em;
+}
+.month-calendar th,
+.month-calendar td {
+    font-size: 0.8em;
+    width: 14.28%;
+    text-align: center;
+}
+.month-calendar .noday {
+    background-color: #fafafa;
+}
+.month-calendar .today {
+    box-shadow: 0px 0px 6px 3.5px #e5e5e5;
+}
+.month-calendar .act {
+    background-color: #2c3e50;
+    color: #ffffff;
+}
+.month-calendar .off {
+    background-color: #1b9686;
+    color: #ffffff;
+}
+.month-calendar caption {
+    margin-top: 1em;
+}
+.month-calendar caption p {
+    margin: 0;
+}
+.modal-header {
+    background-color: #2c3e50;
+    color: #ffffff;
+}
+.modal-footer {
+    background-color: #ebebeb;
+}
+.datepicker{
+    z-index: 1100 !important;
 }

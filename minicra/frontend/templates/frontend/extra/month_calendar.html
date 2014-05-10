@@ -1,0 +1,21 @@
+<table class="month-calendar table table-condensed table-bordered" id="{{ calendar_id }}">
+  <thead>
+    {{ calendar_header|safe }}
+    {{ calendar_week_header|safe }} 
+  </thead>
+  <tbody>
+    {% for week in weeks %}
+    <tr>
+      {% for day in week %}
+        <td class="{% if day.0 == 0 %}{{ noday_css_class }}{% else %}{% if day.0 == today %}{{ today_css_class }} {% endif %}{% if day.0 in days_with_activity %}{{ activity_css_class }}{% elif day.0 in days_off %}{{ off_css_class }}{% endif %}{% endif %}">{% if day.0 != 0 %}{{ day.0 }}{% endif %}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+  {% if days_with_activity or days_off %}
+  <caption align="bottom">
+    <p class="col-md-6 {{ off_css_class }}">days off</p>
+    <p class="col-md-6 {{ activity_css_class }}">days with activity</p>
+  </caption>
+  {% endif %}
+</table>

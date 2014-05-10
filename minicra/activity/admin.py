@@ -6,7 +6,7 @@ from activity.models import (
 )
 
 class ReportAdmin(admin.ModelAdmin):
-    list_display = ('__unicode__', 'contract', 'worked_days', 'off_days', 'days_with_activity')
+    list_display = ('__unicode__', 'contract', 'off_days', 'days_with_activity')
 
 admin.site.register(Activity)
 admin.site.register(OffDay)

@@ -13,17 +13,17 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name=b'OffDay',
+            name=b'Activity',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 (b'date', models.DateField()),
-                (b'period', models.PositiveIntegerField(default=3, choices=[(1, b'morning'), (2, b'afternoon'), (3, b'all_day')])),
+                (b'period', models.PositiveIntegerField(default=3, choices=[(1, b'morning'), (2, b'afternoon'), (3, b'whole day')])),
                 (b'contract', models.ForeignKey(to=b'context.Contract', to_field='id')),
                 (b'comment', models.TextField(blank=True)),
             ],
             options={
-                'verbose_name': 'Off Day',
-                'verbose_name_plural': 'Off Days',
+                'verbose_name': 'Activity',
+                'verbose_name_plural': 'Activities',
             },
             bases=(models.Model,),
         ),

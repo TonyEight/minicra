@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from django.views.generic import (
+    CreateView,
+    ListView
+)
+from activity.models import Activity
 
-# Create your views here.
+
+class ActivityCreateView(CreateView):
+    model = Activity

@@ -1,0 +1,19 @@
+<div class="well well-sm">
+  {% if hour < 3 %}
+  Greetings <strong>{{ username }}</strong>! You, insomniac user!
+  {% elif hour < 6 %}
+  I can say "Hi <strong>{{ username }}</strong>!" but I cannot bring you coffee at this time.
+  {% elif hour < 9 %}
+  Good morning <strong>{{ username }}</strong>.
+  {% elif hour < 13 %}
+  Hello <strong>{{ username }}</strong>!
+  {% elif hour < 16 %}
+  Hey <strong>{{ username }}</strong>, how was the lunch?
+  {% elif hour < 18 %}
+  <strong>{{ username }}</strong>, kids are out of school! Since you're here, I guess you're not a kid... Or have none.
+  {% elif hour < 21 %}
+  Are you working late today <strong>{{ username }}</strong>?
+  {% elif hour < 24 %}
+  Keep going <strong>{{ username }}</strong>! The end of the day is coming.
+  {% endif %}
+</div>
