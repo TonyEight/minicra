@@ -89,6 +89,14 @@ class Month(models.Model):
     def __unicode__(self):
         return u'%s %s' % (self.get_month_display(), self.year)
 
+    def dates_list(self):
+        c = calendar.Calendar()
+        dates = []
+        for d in c.itermonthdays2(self.year, self.month):
+            if d[0] != 0:
+                dates.append((d[0], d[1], calendar.day_name[d[1]]))
+        return dates
+
     def save(self, *args, **kwargs):
         c = calendar.Calendar()
         weekdays = 0

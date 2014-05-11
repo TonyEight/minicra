@@ -66,3 +66,20 @@ h3,
 .datepicker{
     z-index: 1100 !important;
 }
+.report-dates .act {
+    color: #2c3e50;
+}
+.report-dates .off {
+    color: #1b9686;
+}
+.report-dates .weekend {
+    background-color: #ecf0f1;
+}
+.report-dates .legend {
+    padding-left: 1.5em;
+    padding-top: 1em;
+}
+.report-dates th,
+.report-dates td {
+    text-align: center;
+}

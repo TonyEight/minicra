@@ -270,7 +270,35 @@ class ReportDetailView(LoginRequiredMixin, DetailView):
         context = super(ReportDetailView, self).get_context_data(**kwargs)
         rq = self.request.GET
         query = '?year=%s&month=%s&contract=%s' % (rq.get('year',''), rq.get('month',''), rq.get('contract',''))
+        month_dates = []
+        for date in self.object.month.dates_list():
+            act = None
+            off = None
+            try:
+                act = Activity.objects.get(
+                    date__day=date[0],
+                    date__month=self.object.month.month,
+                    date__year=self.object.month.year,
+                    contract=self.object.contract
+                )
+            except:
+                pass
+            try:
+                off = OffDay.objects.get(
+                    date__day=date[0],
+                    date__month=self.object.month.month,
+                    date__year=self.object.month.year,
+                    contract=self.object.contract
+                )
+            except:
+                pass
+            month_dates.append({
+                'date': date,
+                'activity': act,
+                'offday': off
+            })
         context.update({
-            'return_link': reverse('list-report') + query
+            'return_link': reverse('list-report') + query,
+            'dates': month_dates
         })
         return context
