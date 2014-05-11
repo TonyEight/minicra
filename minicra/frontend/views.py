@@ -15,24 +15,18 @@ from django.http import HttpResponse
 from braces.views import LoginRequiredMixin
 from django_filters.views import FilterView
 from activity.models import (
-    Activity,
-    OffDay,
+    DeclaredDay,
     Month,
     Report,
 )
 from context.models import (
-    Organisation,
-    Client,
-    Contract,
-    Project,
+    Contract
 )
 from frontend.forms import (
-    ActivityForm,
-    OffDayForm,
+    DeclaredDayForm
 )
 from frontend.filters import (
-    ActivityFilter,
-    OffDayFilter,
+    DeclaredDayFilter,
     ReportFilter
 )
 
@@ -58,7 +52,7 @@ class AjaxableResponseMixin(object):
         response = super(AjaxableResponseMixin, self).form_valid(form)
         if self.request.is_ajax():
             data = {
-                'url': self.get_success_url(),
+                'pk': self.object.pk,
             }
             return self.render_to_json_response(data)
         else:
@@ -86,28 +80,14 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         days_with_activity = reports.aggregate(
             sum=Sum('days_with_activity')
         )['sum']
-        offdays = reports.aggregate(
+        off_days = reports.aggregate(
             sum=Sum('off_days')
         )['sum']
-        calendar_html = calendar.HTMLCalendar().formatmonth(
-            current_month.year, 
-            current_month.month, 
-            True
-        )
-        calendar_html = calendar_html.replace(
-            'border="0" cellpadding="0" cellspacing="0" class="month"', 
-            'class="table table-bordered table-condensed" id="dashboard-calendar"'
-        )
-        calendar_html = calendar_html.replace(
-            '">' + str(today.day) + '<', 
-            ' today">' + str(today.day) + '<'
-        )
         context.update({
             'contracts': contracts,
             'reports': reports,
             'days_with_activity': days_with_activity,
-            'offdays': offdays,
-            'calendar': calendar_html,
+            'off_days': off_days,
             'current_month': current_month
         })
         return context
@@ -115,11 +95,12 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
 class TraceMyActivityView(LoginRequiredMixin, FilterView):
     template_name = 'frontend/activity/trace_activity.html'
-    filterset_class = ActivityFilter
+    filterset_class = DeclaredDayFilter
 
     def get_queryset(self):
-        return Activity.objects.filter(
-            contract__actor=self.request.user
+        return DeclaredDay.objects.filter(
+            contract__actor=self.request.user,
+            type=1
         )
 
     def get_context_data(self, **kwargs):
@@ -145,17 +126,22 @@ class TraceMyActivityView(LoginRequiredMixin, FilterView):
 
 
 class CreateActivityView(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
-    model = Activity
+    model = DeclaredDay
     template_name = 'frontend/activity/activity_form.html'
-    form_class = ActivityForm
+    form_class = DeclaredDayForm
 
     def get_success_url(self):
         return reverse('trace-activity')
 
+    def form_valid(self, form):
+        form.instance.type = 1
+        return super(CreateActivityView, self).form_valid(form)
+
 
 class UpdateActivityView(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
-    model = Activity
+    model = DeclaredDay
     template_name = 'frontend/activity/activity_form.html'
+    form_class = DeclaredDayForm
 
     def get_initial(self):
         initial = super(UpdateActivityView, self).get_initial()
@@ -165,9 +151,13 @@ class UpdateActivityView(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     def get_success_url(self):
         return reverse('trace-activity')
 
+    def form_valid(self, form):
+        form.instance.type = 1
+        return super(UpdateActivityView, self).form_valid(form)
+
 
 class DeleteActivityView(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
-    model = Activity
+    model = DeclaredDay
 
     def get_success_url(self):
         return reverse('trace-activity')
@@ -175,11 +165,12 @@ class DeleteActivityView(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
 
 class TraceMyOffDayView(LoginRequiredMixin, FilterView):
     template_name = 'frontend/activity/trace_offday.html'
-    filterset_class = OffDayFilter
+    filterset_class = DeclaredDayFilter
 
     def get_queryset(self):
-        return OffDay.objects.filter(
-            contract__actor=self.request.user
+        return DeclaredDay.objects.filter(
+            contract__actor=self.request.user,
+            type=2
         )
 
     def get_context_data(self, **kwargs):
@@ -205,16 +196,21 @@ class TraceMyOffDayView(LoginRequiredMixin, FilterView):
 
 
 class CreateOffDayView(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
-    model = OffDay
+    model = DeclaredDay
     template_name = 'frontend/activity/offday_form.html'
-    form_class = OffDayForm
+    form_class = DeclaredDayForm
 
     def get_success_url(self):
         return reverse('trace-offday')
 
+    def form_valid(self, form):
+        form.instance.type = 2
+        return super(CreateOffDayView, self).form_valid(form)
+
 class UpdateOffDayView(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
-    model = OffDay
+    model = DeclaredDay
     template_name = 'frontend/activity/offday_form.html'
+    form_class = DeclaredDayForm
 
     def get_initial(self):
         initial = super(UpdateOffDayView, self).get_initial()
@@ -224,8 +220,12 @@ class UpdateOffDayView(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
     def get_success_url(self):
         return reverse('trace-offday')
 
+    def form_valid(self, form):
+        form.instance.type = 2
+        return super(UpdateOffDayView, self).form_valid(form)
+
 class DeleteOffDayView(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
-    model = OffDay
+    model = DeclaredDay
 
     def get_success_url(self):
         return reverse('trace-offday')
@@ -275,8 +275,9 @@ class ReportDetailView(LoginRequiredMixin, DetailView):
             act = None
             off = None
             try:
-                act = Activity.objects.get(
+                act = DeclaredDay.objects.get(
                     date__day=date[0],
+                    type=1,
                     date__month=self.object.month.month,
                     date__year=self.object.month.year,
                     contract=self.object.contract
@@ -284,8 +285,9 @@ class ReportDetailView(LoginRequiredMixin, DetailView):
             except:
                 pass
             try:
-                off = OffDay.objects.get(
+                off = DeclaredDay.objects.get(
                     date__day=date[0],
+                    type=2,
                     date__month=self.object.month.month,
                     date__year=self.object.month.year,
                     contract=self.object.contract

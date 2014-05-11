@@ -1,7 +1,7 @@
-<form id="offday-form" method="post" action="{% if offday.pk %}{% url 'update-offday' object.pk %}{% else %}{% url 'create-offday' %}{% endif %}">
+<form id="offday-form" method="post" action="{% if object.pk %}{% url 'update-offday' object.pk %}{% else %}{% url 'create-offday' %}{% endif %}">
   <div class="modal-header">
     <h4 class="modal-title" id="offday-create-form">
-      <i class="fa fa-clock-o"></i> {% if offday.pk %}Edit{% else %}Add{% endif %} offday
+      <i class="fa fa-clock-o"></i> {% if object.pk %}Edit{% else %}Add{% endif %} off day
     </h4>
   </div>
   <div class="modal-body">
@@ -20,14 +20,14 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    <button type="submit" class="btn btn-primary">{% if offday.pk %}Save changes{% else %}Add{% endif %}</button>
-    {% if offday.pk %}
-    <button type="button" id="delete-button" class="btn btn-danger pull-left">Delete this offday</button>
+    <button type="submit" class="btn btn-primary">{% if object.pk %}Save changes{% else %}Add{% endif %}</button>
+    {% if object.pk %}
+    <button type="button" id="delete-button" class="btn btn-danger pull-left">Delete this off day</button>
     {% endif %}
   </div>
 </form>
-{% if offday.pk %}
-<form action="{% url 'delete-offday' offday.pk %}" method="post" id="offday-delete-form">
+{% if object.pk %}
+<form action="{% url 'delete-offday' object.pk %}" method="post" id="offday-delete-form">
   {% csrf_token %}
 </form>
 {% endif %}

@@ -1,7 +1,7 @@
-<form id="activity-form" method="post" action="{% if activity.pk %}{% url 'update-activity' object.pk %}{% else %}{% url 'create-activity' %}{% endif %}">
+<form id="activity-form" method="post" action="{% if object.pk %}{% url 'update-activity' object.pk %}{% else %}{% url 'create-activity' %}{% endif %}">
   <div class="modal-header">
     <h4 class="modal-title" id="activity-create-form">
-      <i class="fa fa-clock-o"></i> {% if activity.pk %}Edit{% else %}Add{% endif %} activity
+      <i class="fa fa-clock-o"></i> {% if object.pk %}Edit{% else %}Add{% endif %} activity
     </h4>
   </div>
   <div class="modal-body">
@@ -20,14 +20,14 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    <button type="submit" class="btn btn-primary">{% if activity.pk %}Save changes{% else %}Add{% endif %}</button>
-    {% if activity.pk %}
+    <button type="submit" class="btn btn-primary">{% if object.pk %}Save changes{% else %}Add{% endif %}</button>
+    {% if object.pk %}
     <button type="button" id="delete-button" class="btn btn-danger pull-left">Delete this activity</button>
     {% endif %}
   </div>
 </form>
-{% if activity.pk %}
-<form action="{% url 'delete-activity' activity.pk %}" method="post" id="activity-delete-form">
+{% if object.pk %}
+<form action="{% url 'delete-activity' object.pk %}" method="post" id="activity-delete-form">
   {% csrf_token %}
 </form>
 {% endif %}

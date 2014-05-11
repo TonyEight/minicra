@@ -19,7 +19,7 @@
         <ul class="list-group">
           <li class="list-group-item">
             <h5 class="list-group-item-heading"><strong>Declared activity</strong></h5>
-            <p class="list-group-item-text">You had declared a total of <span class="label label-primary">{{ days_with_activity|default_if_none:'0'|beautify }}</span> day{{ days_with_activity|default_if_none:'0'|pluralize }} with activity.</p>
+            <p class="list-group-item-text">You had declared a total of <span class="label label-primary">{{ days_with_activity|default_if_none:'0'|beautify }}</span> day{{ days_with_activity|pluralize }} with activity.</p>
           </li>
           {% for report in reports %}
           {% if report.days_with_activity > 0 %}
@@ -30,7 +30,7 @@
           {% endfor %}
           <li class="list-group-item">
             <h5 class="list-group-item-heading"><strong>Declared off days</strong></h5>
-            <p class="list-group-item-text">You had declared a total of <span class="label label-primary">{{ offdays|default_if_none:'0'|beautify }}</span> off day{{ offdays|default_if_none:'0'|pluralize }}.</p>
+            <p class="list-group-item-text">You had declared a total of <span class="label label-primary">{{ off_days|default_if_none:'0'|beautify }}</span> off day{{ off_days|pluralize }}.</p>
           </li>
           {% for report in reports %}
           {% if report.off_days > 0 %}

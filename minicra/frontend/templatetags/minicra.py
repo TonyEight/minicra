@@ -66,7 +66,8 @@ def month_calendar(context, year, month, calendar_id, with_year=True,
         a = days_with_activity.append
         user = context['user']
         for c in user.contracts.all():
-            for d in c.activities.filter(
+            for d in c.declared_days.filter(
+                type=1,
                 date__month=month,
                 date__year=year
             ):
@@ -75,7 +76,8 @@ def month_calendar(context, year, month, calendar_id, with_year=True,
         o = days_off.append
         user = context['user']
         for c in user.contracts.all():
-            for d in c.off_days.filter(
+            for d in c.declared_days.filter(
+                type=2,
                 date__month=month,
                 date__year=year
             ):

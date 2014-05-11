@@ -1,17 +1,11 @@
 from django import forms
 from activity.models import (
-    Activity,
-    OffDay
+    DeclaredDay
 )
 
 
-class ActivityForm(forms.ModelForm):
+class DeclaredDayForm(forms.ModelForm):
     class Meta:
-        model = Activity
+        model = DeclaredDay
         fields = '__all__'
-
-
-class OffDayForm(forms.ModelForm):
-    class Meta:
-        model = OffDay
-        fields = '__all__'
+        exclude = ('type',)

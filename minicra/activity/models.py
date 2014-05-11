@@ -6,20 +6,28 @@ from django.conf import settings
 from context.models import Contract
 
 
-class Activity(models.Model):
+class DeclaredDay(models.Model):
     PERIODS = (
         (1, 'Morning'),
         (2, 'Afternoon'),
         (3, 'Whole day'),
     )
+    TYPES = (
+        (1, 'Activity'),
+        (2, 'Off Day'),
+    )
     date = models.DateField()
     period = models.PositiveIntegerField(
         choices=PERIODS,
+        default=1
+    )
+    type = models.PositiveIntegerField(
+        choices=TYPES,
         default=3
     )
     contract = models.ForeignKey(
         Contract,
-        related_name='activities'
+        related_name='declared_days'
     )
     comment = models.TextField(
         blank=True
@@ -28,36 +36,14 @@ class Activity(models.Model):
     class Meta:
         verbose_name = _('Activity')
         verbose_name_plural = _('Activities')
+        ordering = ('date', 'contract',)
+
+    def _get_actor(self):
+        return self.contract.actor
+    actor = property(_get_actor)
 
     def __unicode__(self):
-        return u'%s: %s (%s)' % (self.contract.actor, self.date, self.get_period_display())
-
-
-class OffDay(models.Model):
-    PERIODS = (
-        (1, 'Morning'),
-        (2, 'Afternoon'),
-        (3, 'Whole day'),
-    )
-    date = models.DateField()
-    period = models.PositiveIntegerField(
-        choices=PERIODS,
-        default=3
-    )
-    contract = models.ForeignKey(
-        Contract,
-        related_name='off_days'
-    )
-    comment = models.TextField(
-        blank=True
-    )
-
-    class Meta:
-        verbose_name = _('Off Day')
-        verbose_name_plural = _('Off Days')
-
-    def __unicode__(self):
-        return u'%s: %s (%s)' % (self.contract.actor, self.date, self.get_period_display())
+        return u'%s: %s (%s)' % (self.date, self.contract, self.get_period_display())
 
 
 class Month(models.Model):
@@ -127,27 +113,38 @@ class Report(models.Model):
     def __unicode__(self):
         return u'Activity Report of %s' % (self.month)
 
-    def update_report_figures(self):
+    @classmethod
+    def get_reports_for(cls, user):
+        return cls.objects.filter(contract__actor=user)
+
+    def _get_worked_days(self):
+        return self.month.worked_days
+    worked_days = property(_get_worked_days)
+
+    def save(self, *args, **kwargs):
         c = calendar.Calendar()
         activities = 0
-        for a in Activity.objects.filter(date__year=self.month.year, date__month=self.month.month, contract=self.contract):
-            if a.period == 3:
+        for act in DeclaredDay.objects.filter(
+            type=1, 
+            date__year=self.month.year, 
+            date__month=self.month.month, 
+            contract=self.contract
+        ):
+            if act.period == 3:
                 activities += 1
             else:
                 activities += 0.5
         self.days_with_activity = activities
         off_days = 0
-        for a in OffDay.objects.filter(date__year=self.month.year, date__month=self.month.month, contract=self.contract):
-            if a.period == 3:
+        for off in DeclaredDay.objects.filter(
+            type=2,
+            date__year=self.month.year, 
+            date__month=self.month.month, 
+            contract=self.contract
+        ):
+            if off.period == 3:
                 off_days += 1
             else:
                 off_days += 0.5
         self.off_days = off_days
-
-    @classmethod
-    def get_reports_for(cls, user):
-        return cls.objects.filter(contract__actor=user)
-
-    def save(self, *args, **kwargs):
-        self.update_report_figures()
         super(Report, self).save(*args, **kwargs)

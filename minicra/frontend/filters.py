@@ -1,8 +1,7 @@
 import datetime
 import django_filters
 from activity.models import (
-    Activity,
-    OffDay,
+    DeclaredDay,
     Month,
     Report,
 )
@@ -25,11 +24,11 @@ def get_months():
 def get_periods():
     periods = []
     periods.append((None, 'Any period'))
-    periods += Activity.PERIODS
+    periods += DeclaredDay.PERIODS
     return periods
 
 
-class ActivityFilter(django_filters.FilterSet):
+class DeclaredDayFilter(django_filters.FilterSet):
     month = django_filters.ChoiceFilter(
         choices=get_months(), 
         name='date',
@@ -45,42 +44,11 @@ class ActivityFilter(django_filters.FilterSet):
     )
 
     class Meta:
-        model = Activity
+        model = DeclaredDay
         fields = ['period', 'contract']
 
     def __init__(self, *args, **kwargs):
-        super(ActivityFilter, self).__init__(*args, **kwargs)
-        self.filters['contract'].extra.update(
-            {'empty_label': 'Any contract'}
-        )
-        for name, field in self.form.fields.items():
-            if field.widget.attrs.has_key('class'):
-                field.widget.attrs['class'] += ' form-control'
-            else:
-                field.widget.attrs.update({'class':'form-control'})
-
-
-class OffDayFilter(django_filters.FilterSet):
-    month = django_filters.ChoiceFilter(
-        choices=get_months(), 
-        name='date',
-        lookup_type='month'
-    )
-    year = django_filters.ChoiceFilter(
-        choices=get_years(), 
-        name='date',
-        lookup_type='year'
-    )
-    period = django_filters.ChoiceFilter(
-        choices=get_periods(),
-    )
-
-    class Meta:
-        model = OffDay
-        fields = ['period', 'contract']
-
-    def __init__(self, *args, **kwargs):
-        super(OffDayFilter, self).__init__(*args, **kwargs)
+        super(DeclaredDayFilter, self).__init__(*args, **kwargs)
         self.filters['contract'].extra.update(
             {'empty_label': 'Any contract'}
         )

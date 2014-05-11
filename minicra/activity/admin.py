@@ -1,13 +1,17 @@
 from django.contrib import admin
 from activity.models import (
-    Activity,
-    OffDay,
+    DeclaredDay,
     Report,
 )
 
-class ReportAdmin(admin.ModelAdmin):
-    list_display = ('__unicode__', 'contract', 'off_days', 'days_with_activity')
+class DeclaredDayAdmin(admin.ModelAdmin):
+    list_display = ('date', 'contract', 'actor', 'type', 'period',)
+    list_display_links = ('date',)
+    list_filter = ('type', 'period', 'contract', 'contract__actor',)
 
-admin.site.register(Activity)
-admin.site.register(OffDay)
+class ReportAdmin(admin.ModelAdmin):
+    list_display = ('__unicode__', 'contract', 'worked_days','off_days', 
+    				'days_with_activity',)
+
+admin.site.register(DeclaredDay, DeclaredDayAdmin)
 admin.site.register(Report, ReportAdmin)

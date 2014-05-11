@@ -34,8 +34,8 @@
         </div>
         <div class="panel-body">
           <p><span class="label label-primary">{{ report.month.worked_days }}</span> worked day{{ report.month.worked_days|pluralize }}</p>
-          <p><span class="label label-primary">{{ report.days_with_activity|default_if_none:'0'|beautify }}</span> day{{ report.days_with_activity|default_if_none:'0'|beautify|pluralize }} with activity</p>
-          <p><span class="label label-primary">{{ report.off_days|default_if_none:'0'|beautify }}</span> off day{{ report.off_days|default_if_none:'0'|beautify|pluralize }}</p>
+          <p><span class="label label-primary">{{ report.days_with_activity|default_if_none:'0'|beautify }}</span> day{{ report.days_with_activity|pluralize }} with activity</p>
+          <p><span class="label label-primary">{{ report.off_days|default_if_none:'0'|beautify }}</span> off day{{ report.off_days|pluralize }}</p>
         </div>
       </div>
       {% endfor %}
