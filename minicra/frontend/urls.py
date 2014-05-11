@@ -3,12 +3,28 @@ from frontend.views import (
     DashboardView,
     TraceMyActivityView,
     CreateActivityView,
+    UpdateActivityView,
+    DeleteActivityView,
+    TraceMyOffDayView,
+    CreateOffDayView,
+    UpdateOffDayView,
+    DeleteOffDayView,
+    ReportListView,
+    ReportDetailView
 )
 
 urlpatterns = [
     url(r'^$', DashboardView.as_view(), name='dashboard'),
     url(r'^activity/$', TraceMyActivityView.as_view(), name='trace-activity'),
     url(r'^activity/add/$', CreateActivityView.as_view(), name='create-activity'),
+    url(r'^activity/(?P<pk>\d+)/edit/$', UpdateActivityView.as_view(), name='update-activity'),
+    url(r'^activity/(?P<pk>\d+)/delete/$', DeleteActivityView.as_view(), name='delete-activity'),
+    url(r'^offday/$', TraceMyOffDayView.as_view(), name='trace-offday'),
+    url(r'^offday/add/$', CreateOffDayView.as_view(), name='create-offday'),
+    url(r'^offday/(?P<pk>\d+)/edit/$', UpdateOffDayView.as_view(), name='update-offday'),
+    url(r'^offday/(?P<pk>\d+)/delete/$', DeleteOffDayView.as_view(), name='delete-offday'),
+    url(r'^reports/$', ReportListView.as_view(), name='list-report'),
+    url(r'^reports/(?P<pk>\d+)/$', ReportDetailView.as_view(), name='detail-report'),
     url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'frontend/auth/login.html'}, name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout_then_login', name='logout'),
     url(r'^password_change/$', 'django.contrib.auth.views.password_change', {'template_name': 'frontend/auth/password_change_form.html'}, name='password_change'),

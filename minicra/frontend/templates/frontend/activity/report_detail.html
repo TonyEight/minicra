@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load minicra %}
+
+{% block page-title %}{{ object }}{% endblock %}
+
+{% block title %}<h3 class="muted">{{ object }}</h3>{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <a href="{{ return_link }}" class="btn btn-info btn-sm">
+      <i class="fa fa-chevron-left"></i> 
+      Return to my reports
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra-js %}
+<script type="text/javascript">
+  (function($) {
+    window.history.pushState('{% url 'detail-report' object.pk %}')
+  })(jQuery)
+</script>
+{% endblock %}

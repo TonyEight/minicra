@@ -11,6 +11,7 @@
     <!-- Bootstrap -->
     <link href="//netdna.bootstrapcdn.com/bootswatch/3.1.1/flatly/bootstrap.min.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://eternicode.github.io/bootstrap-datepicker/bootstrap-datepicker/css/datepicker3.css" rel="stylesheet">
     {% block extra-css %}{% endblock %}
     <link href="{% static 'css/minicra.css' %}" rel="stylesheet">
 
@@ -43,8 +44,8 @@
           <ul class="nav navbar-nav navbar-right">
             <li class="{% active request 'dashboard' %}"><a href="{% url 'dashboard' %}">Dashdoard</a></li>
             <li class="{% active request 'trace-activity' %}"><a href="{% url 'trace-activity' %}">Trace my activity</a></li>
-            <li><a href="#">Trace my holidays</a></li>
-            <li><a href="#">Reports</a></li>
+            <li class="{% active request 'trace-offday' %}"><a href="{% url 'trace-offday' %}">Trace my off days</a></li>
+            <li class="{% active request 'list-report' %}"><a href="{% url 'list-report' %}">See my reports</a></li>
             <li class="dropdown">
               <a href="#" id="user-menu" class="dropdown-toggle" data-toggle="dropdown">
                 Connected as 
@@ -108,13 +109,14 @@
 
     <!-- Footer -->
     <footer class="text-center" id="footer">
-      <p>Copyright &copy; 2014 - <a href="https://github.com/TonyEight"><strong><i class="fa fa-github"></i> TonyEight</strong></a></p>
+      <p>Copyright &copy; {% now 'Y' %} &middot; <a href="https://github.com/TonyEight/minicra"><strong><i class="glyphicon glyphicon-stats"></i> MiniCRA</strong></a> developed by <a href="https://github.com/TonyEight"><strong><i class="fa fa-github"></i> TonyEight</strong></a></p>
     </footer><!-- /#footer -->
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="http://eternicode.github.io/bootstrap-datepicker/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
     {% block extra-js %}{% endblock %}
   </body>
 </html>

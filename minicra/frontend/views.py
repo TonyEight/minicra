@@ -1,9 +1,17 @@
 import datetime
 import calendar
-from django.views.generic import TemplateView
+import json
+from django.views.generic import (
+    TemplateView,
+    CreateView,
+    UpdateView,
+    DetailView,
+    DeleteView
+)
 from django.db.models import Q
 from django.db.models import Sum
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 from braces.views import LoginRequiredMixin
 from django_filters.views import FilterView
 from activity.models import (
@@ -18,14 +26,14 @@ from context.models import (
     Contract,
     Project,
 )
-from activity.views import (
-    ActivityCreateView,
-)
 from frontend.forms import (
     ActivityForm,
+    OffDayForm,
 )
 from frontend.filters import (
     ActivityFilter,
+    OffDayFilter,
+    ReportFilter
 )
 
 
@@ -37,6 +45,7 @@ class AjaxableResponseMixin(object):
 
     def form_invalid(self, form):
         response = super(AjaxableResponseMixin, self).form_invalid(form)
+        print self.request.is_ajax()
         if self.request.is_ajax():
             return self.render_to_json_response(form.errors, status=400)
         else:
@@ -49,7 +58,7 @@ class AjaxableResponseMixin(object):
         response = super(AjaxableResponseMixin, self).form_valid(form)
         if self.request.is_ajax():
             data = {
-                'pk': self.object.pk,
+                'url': self.get_success_url(),
             }
             return self.render_to_json_response(data)
         else:
@@ -71,7 +80,8 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             year=today.year
         )
         reports = Report.objects.filter(
-            month=current_month
+            month=current_month,
+            contract__in=contracts
         )
         days_with_activity = reports.aggregate(
             sum=Sum('days_with_activity')
@@ -128,14 +138,139 @@ class TraceMyActivityView(LoginRequiredMixin, FilterView):
             except:
                 current_month = None
         context.update({
-            'activity_form': ActivityForm(),
-            'current_month': current_month
+            'current_month': current_month,
+            'user_has_activity': len(self.get_queryset())
         })
         return context
 
 
-class CreateActivityView(LoginRequiredMixin, AjaxableResponseMixin, ActivityCreateView):
-    template_name = 'frontend/activity/create_activity.html'
+class CreateActivityView(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
+    model = Activity
+    template_name = 'frontend/activity/activity_form.html'
+    form_class = ActivityForm
 
     def get_success_url(self):
         return reverse('trace-activity')
+
+
+class UpdateActivityView(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
+    model = Activity
+    template_name = 'frontend/activity/activity_form.html'
+
+    def get_initial(self):
+        initial = super(UpdateActivityView, self).get_initial()
+        initial['date'] = self.object.date.strftime('%m/%d/%Y')
+        return initial
+
+    def get_success_url(self):
+        return reverse('trace-activity')
+
+
+class DeleteActivityView(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
+    model = Activity
+
+    def get_success_url(self):
+        return reverse('trace-activity')
+
+
+class TraceMyOffDayView(LoginRequiredMixin, FilterView):
+    template_name = 'frontend/activity/trace_offday.html'
+    filterset_class = OffDayFilter
+
+    def get_queryset(self):
+        return OffDay.objects.filter(
+            contract__actor=self.request.user
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super(TraceMyOffDayView, self).get_context_data(**kwargs)
+        try:
+            current_month = Month.objects.get(
+                month=int(self.filterset.form.cleaned_data['month']),
+                year=int(self.filterset.form.cleaned_data['year'])
+            )
+        except:
+            try:
+                current_month = {
+                    'month': int(self.filterset.form.cleaned_data['month']),
+                    'year': int(self.filterset.form.cleaned_data['year'])
+                }
+            except:
+                current_month = None
+        context.update({
+            'current_month': current_month,
+            'user_has_offday': len(self.get_queryset())
+        })
+        return context
+
+
+class CreateOffDayView(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
+    model = OffDay
+    template_name = 'frontend/activity/offday_form.html'
+    form_class = OffDayForm
+
+    def get_success_url(self):
+        return reverse('trace-offday')
+
+class UpdateOffDayView(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
+    model = OffDay
+    template_name = 'frontend/activity/offday_form.html'
+
+    def get_initial(self):
+        initial = super(UpdateOffDayView, self).get_initial()
+        initial['date'] = self.object.date.strftime('%m/%d/%Y')
+        return initial
+
+    def get_success_url(self):
+        return reverse('trace-offday')
+
+class DeleteOffDayView(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
+    model = OffDay
+
+    def get_success_url(self):
+        return reverse('trace-offday')
+
+
+class ReportListView(LoginRequiredMixin, FilterView):
+    template_name = 'frontend/activity/report_list.html'
+    filterset_class = ReportFilter
+
+    def get_queryset(self):
+        return Report.objects.filter(
+            contract__actor=self.request.user
+        ).order_by('-month')
+
+    def get_context_data(self, **kwargs):
+        context = super(ReportListView, self).get_context_data(**kwargs)
+        try:
+            current_month = Month.objects.get(
+                month=int(self.filterset.form.cleaned_data['month']),
+                year=int(self.filterset.form.cleaned_data['year'])
+            )
+        except:
+            try:
+                current_month = {
+                    'month': int(self.filterset.form.cleaned_data['month']),
+                    'year': int(self.filterset.form.cleaned_data['year'])
+                }
+            except:
+                current_month = None
+        context.update({
+            'current_month': current_month,
+            'reports': Report.get_reports_for(self.request.user)
+        })
+        return context
+
+
+class ReportDetailView(LoginRequiredMixin, DetailView):
+    model = Report
+    template_name = 'frontend/activity/report_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ReportDetailView, self).get_context_data(**kwargs)
+        rq = self.request.GET
+        query = '?year=%s&month=%s&contract=%s' % (rq.get('year',''), rq.get('month',''), rq.get('contract',''))
+        context.update({
+            'return_link': reverse('list-report') + query
+        })
+        return context

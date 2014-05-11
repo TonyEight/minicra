@@ -28,6 +28,7 @@ def get_periods():
     periods += Activity.PERIODS
     return periods
 
+
 class ActivityFilter(django_filters.FilterSet):
     month = django_filters.ChoiceFilter(
         choices=get_months(), 
@@ -49,6 +50,65 @@ class ActivityFilter(django_filters.FilterSet):
 
     def __init__(self, *args, **kwargs):
         super(ActivityFilter, self).__init__(*args, **kwargs)
+        self.filters['contract'].extra.update(
+            {'empty_label': 'Any contract'}
+        )
+        for name, field in self.form.fields.items():
+            if field.widget.attrs.has_key('class'):
+                field.widget.attrs['class'] += ' form-control'
+            else:
+                field.widget.attrs.update({'class':'form-control'})
+
+
+class OffDayFilter(django_filters.FilterSet):
+    month = django_filters.ChoiceFilter(
+        choices=get_months(), 
+        name='date',
+        lookup_type='month'
+    )
+    year = django_filters.ChoiceFilter(
+        choices=get_years(), 
+        name='date',
+        lookup_type='year'
+    )
+    period = django_filters.ChoiceFilter(
+        choices=get_periods(),
+    )
+
+    class Meta:
+        model = OffDay
+        fields = ['period', 'contract']
+
+    def __init__(self, *args, **kwargs):
+        super(OffDayFilter, self).__init__(*args, **kwargs)
+        self.filters['contract'].extra.update(
+            {'empty_label': 'Any contract'}
+        )
+        for name, field in self.form.fields.items():
+            if field.widget.attrs.has_key('class'):
+                field.widget.attrs['class'] += ' form-control'
+            else:
+                field.widget.attrs.update({'class':'form-control'})
+
+
+class ReportFilter(django_filters.FilterSet):
+    month = django_filters.ChoiceFilter(
+        choices=get_months(), 
+        name='month',
+        lookup_type='month'
+    )
+    year = django_filters.ChoiceFilter(
+        choices=get_years(), 
+        name='month',
+        lookup_type='year'
+    )
+
+    class Meta:
+        model = Report
+        fields = ['contract']
+
+    def __init__(self, *args, **kwargs):
+        super(ReportFilter, self).__init__(*args, **kwargs)
         self.filters['contract'].extra.update(
             {'empty_label': 'Any contract'}
         )

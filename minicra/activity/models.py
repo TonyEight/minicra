@@ -35,9 +35,9 @@ class Activity(models.Model):
 
 class OffDay(models.Model):
     PERIODS = (
-        (1, 'morning'),
-        (2, 'afternoon'),
-        (3, 'all_day'),
+        (1, 'Morning'),
+        (2, 'Afternoon'),
+        (3, 'Whole day'),
     )
     date = models.DateField()
     period = models.PositiveIntegerField(
@@ -135,6 +135,10 @@ class Report(models.Model):
             else:
                 off_days += 0.5
         self.off_days = off_days
+
+    @classmethod
+    def get_reports_for(cls, user):
+        return cls.objects.filter(contract__actor=user)
 
     def save(self, *args, **kwargs):
         self.update_report_figures()

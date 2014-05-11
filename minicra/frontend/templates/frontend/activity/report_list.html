@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load minicra %}
+
+{% block page-title %}Reports{% endblock %}
+
+{% block title %}<h3 class="muted">Reports</h3>{% endblock %}
+
+{% block content %}
+{% if reports %}
+<div class="row">
+  <div class="col-md-12">
+    <form action="{% url 'list-report' %}" method="get">
+      {% for field in filter.form %}
+      <div class="col-md-4">
+        <p class="text-center">{{ field.label }}</p>
+        <p>{{ field }}</p>
+      </div>
+      {% endfor%}
+    </form>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel-group">
+      {% for report in object_list %}
+      <div class="report panel panel-default">
+        <div class="panel-heading">
+          <h5 class="panel-title">
+            <a href="{% url 'detail-report' report.pk %}?year={{ request.GET.year }}&month={{ request.GET.month }}&contract={{ request.GET.contract }}">
+              {{ report.month }} &middot; {{ report.contract }}
+            </a>
+          </h5>
+        </div>
+        <div class="panel-body">
+          <p><span class="label label-primary">{{ report.month.worked_days }}</span> worked day{{ report.month.worked_days|pluralize }}</p>
+          <p><span class="label label-primary">{{ report.days_with_activity|default_if_none:'0'|beautify }}</span> day{{ report.days_with_activity|default_if_none:'0'|beautify|pluralize }} with activity</p>
+          <p><span class="label label-primary">{{ report.off_days|default_if_none:'0'|beautify }}</span> off day{{ report.off_days|default_if_none:'0'|beautify|pluralize }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="row">
+  <div class="col-md-12">
+    <p>You have no report yet. Make sure to declare <a href="{% url 'trace-activity' %}">activity</a> or <a href="{% url 'trace-offday' %}">off day</a> first.</p>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra-js %}
+<script type="text/javascript">
+  (function($) {
+    $('select').on('change', function () {
+      $(this).closest('form').submit();
+    });
+  })(jQuery)
+</script>
+{% endblock %}

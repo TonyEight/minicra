@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load minicra %}
+
+{% block page-title %}Trace my off days{% endblock %}
+
+{% block title %}<h3 class="muted">Trace my off days</h3>{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-9">
+    <div class="row">
+      <div class="col-md-12">
+        <h4>List of my off days</h4>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        {% if user_has_offday %}
+        <form action="{% url 'trace-offday' %}" method="get">
+          {% for field in filter.form %}
+          <div class="col-md-3">
+            <p class="text-center">{{ field.label }}</p>
+            <p>{{ field }}</p>
+          </div>
+          {% endfor%}
+        </form>
+        {% else %}
+        <p>You had declared no offday yet.</p>
+        <p>Is it normal? If not, just <a href="" id="declare-offday-link">declare</a> your days of offday.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        {% if object_list %}
+        <div class="list-group">
+          {% for offday in object_list %}
+          <a class="offday list-group-item" href="" data-update="{% url 'update-offday' offday.pk %}">
+            <em class="list-group-item-heading">{{ offday.contract }}</em>
+            <p class="list-group-item-text">{{ offday.date }} <span class="label label-default">{{ offday.get_period_display }}</span></p>
+          </a>
+          {% endfor %}
+        </div>
+        {% elif user_has_offday %}
+        <p>Nothing matched your search.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3 hidden-xs">
+    <div class="row">
+      <div class="col-md-12">
+        <button class="btn btn-primary" id="create-offday-button">
+          <i class="fa fa-clock-o"></i> Add offday
+        </button>
+        <div class="modal fade" id="offday-modal-form" tabindex="-1" role="dialog" aria-labelledby="offday-create-form" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        {% month_calendar current_month.year current_month.month 'dashboard-calendar' %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra-js %}
+<script type="text/javascript">
+  (function($) {
+    $('#create-offday-button').click(function(event) {
+      event.preventDefault();
+      $('#offday-modal-form .modal-content').load('{% url 'create-offday' %}', function() {
+        $('#offday-modal-form').modal('show');
+      });
+    });
+    $('#declare-offday-link').click(function(event) {
+      event.preventDefault();
+      $('#offday-modal-form .modal-content').load('{% url 'create-offday' %}', function() {
+        $('#offday-modal-form').modal('show');
+      });
+    });
+    $('.offday').click(function(event) {
+      event.preventDefault();
+      $('#offday-modal-form .modal-content').load($(this).attr('data-update'), function() {
+        $('#offday-modal-form').modal('show');
+      });
+    });
+    $('select').on('change', function () {
+      $(this).closest('form').submit();
+    });
+  })(jQuery)
+</script>
+{% endblock %}
