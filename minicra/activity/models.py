@@ -43,7 +43,8 @@ class DeclaredDay(models.Model):
     actor = property(_get_actor)
 
     def __unicode__(self):
-        return u'%s: %s (%s)' % (self.date, self.contract, self.get_period_display())
+        return u'%s: %s (%s)' % (self.date, self.contract, 
+                                 self.get_period_display())
 
 
 class Month(models.Model):

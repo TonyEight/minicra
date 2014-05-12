@@ -125,7 +125,8 @@ class TraceMyActivityView(LoginRequiredMixin, FilterView):
         return context
 
 
-class CreateActivityView(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
+class CreateActivityView(LoginRequiredMixin, 
+                         AjaxableResponseMixin, CreateView):
     model = DeclaredDay
     template_name = 'frontend/activity/activity_form.html'
     form_class = DeclaredDayForm
@@ -138,7 +139,8 @@ class CreateActivityView(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
         return super(CreateActivityView, self).form_valid(form)
 
 
-class UpdateActivityView(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
+class UpdateActivityView(LoginRequiredMixin, 
+                         AjaxableResponseMixin, UpdateView):
     model = DeclaredDay
     template_name = 'frontend/activity/activity_form.html'
     form_class = DeclaredDayForm
@@ -156,7 +158,8 @@ class UpdateActivityView(LoginRequiredMixin, AjaxableResponseMixin, UpdateView):
         return super(UpdateActivityView, self).form_valid(form)
 
 
-class DeleteActivityView(LoginRequiredMixin, AjaxableResponseMixin, DeleteView):
+class DeleteActivityView(LoginRequiredMixin, 
+                         AjaxableResponseMixin, DeleteView):
     model = DeclaredDay
 
     def get_success_url(self):
@@ -269,7 +272,11 @@ class ReportDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(ReportDetailView, self).get_context_data(**kwargs)
         rq = self.request.GET
-        query = '?year=%s&month=%s&contract=%s' % (rq.get('year',''), rq.get('month',''), rq.get('contract',''))
+        query = '?year=%s&month=%s&contract=%s' % (
+            rq.get('year',''), 
+            rq.get('month',''), 
+            rq.get('contract','')
+        )
         month_dates = []
         for date in self.object.month.dates_list():
             act = None

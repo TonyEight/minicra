@@ -15,7 +15,6 @@ Source
 TODO
 ----
 
-* Refactor code to respect PEP8 specs
 * Split settings to manage environments
 * Add public holidays
 * Add Excel export feature
