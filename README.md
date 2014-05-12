@@ -1,11 +1,20 @@
 MiniCRA
 =======
 
+Description
+-----------
+
 A mini Django project to manage activity reports per user.
 Built with Django 1.7b3
 
+Source
+------
+[GitHub](https://github.com/TonyEight/minicra)
+
+
 TODO
-========
+----
+
 * Refactor code to respect PEP8 specs
 * Split settings to manage environments
 * Add public holidays
