@@ -1,0 +1,21 @@
+{% if object_list %}
+<div class="list-group">
+  {% for organisation in object_list %}
+  <a class="organisation list-group-item" href="" data-update="{% url 'update-organisation' organisation.pk %}">
+    <em class="list-group-item-heading">{{ organisation }}</em>
+  </a>
+  {% endfor %}
+</div>
+{% elif user_has_organisations %}
+<p>Nothing matched your search.</p>
+{% endif %}
+<script type="text/javascript">
+  (function($) {
+    $('.organisation').click(function(event) {
+      event.preventDefault();
+      $('#organisation-modal-form .modal-content').load($(this).attr('data-update'), function() {
+        $('#organisation-modal-form').modal('show');
+      });
+    });
+  })(jQuery)
+</script>

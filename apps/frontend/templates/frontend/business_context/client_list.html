@@ -1,0 +1,21 @@
+{% if object_list %}
+<div class="list-group">
+  {% for client in object_list %}
+  <a class="client list-group-item" href="" data-update="{% url 'update-client' client.pk %}">
+    <em class="list-group-item-heading">{{ client }}</em>
+  </a>
+  {% endfor %}
+</div>
+{% elif user_has_clients %}
+<p>Nothing matched your search.</p>
+{% endif %}
+<script type="text/javascript">
+  (function($) {
+    $('.client').click(function(event) {
+      event.preventDefault();
+      $('#client-modal-form .modal-content').load($(this).attr('data-update'), function() {
+        $('#client-modal-form').modal('show');
+      });
+    });
+  })(jQuery)
+</script>

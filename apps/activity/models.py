@@ -3,7 +3,7 @@ import calendar
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from context.models import Contract
+from business_context.models import Contract
 
 
 class DeclaredDay(models.Model):
@@ -43,7 +43,7 @@ class DeclaredDay(models.Model):
     actor = property(_get_actor)
 
     def __unicode__(self):
-        return u'%s: %s (%s)' % (self.date, self.contract, 
+        return u'%s: %s (%s)' % (self.date, self.contract,
                                  self.get_period_display())
 
 
@@ -104,7 +104,7 @@ class Report(models.Model):
     contract = models.ForeignKey(
         Contract,
         related_name='activity_reports'
-    )    
+    )
 
     class Meta:
         verbose_name = _('Report')
@@ -126,9 +126,9 @@ class Report(models.Model):
         c = calendar.Calendar()
         activities = 0
         for act in DeclaredDay.objects.filter(
-            type=1, 
-            date__year=self.month.year, 
-            date__month=self.month.month, 
+            type=1,
+            date__year=self.month.year,
+            date__month=self.month.month,
             contract=self.contract
         ):
             if act.period == 3:
@@ -139,8 +139,8 @@ class Report(models.Model):
         off_days = 0
         for off in DeclaredDay.objects.filter(
             type=2,
-            date__year=self.month.year, 
-            date__month=self.month.month, 
+            date__year=self.month.year,
+            date__month=self.month.month,
             contract=self.contract
         ):
             if off.period == 3:

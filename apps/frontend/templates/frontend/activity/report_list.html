@@ -24,10 +24,10 @@
   <div class="col-md-12">
     <div class="panel-group">
       {% for report in object_list %}
-      <div class="report panel panel-default">
+      <div class="panel panel-default">
         <div class="panel-heading">
           <h5 class="panel-title">
-            <a href="{% url 'detail-report' report.pk %}?year={{ request.GET.year }}&month={{ request.GET.month }}&contract={{ request.GET.contract }}">
+            <a href="" data-load="{% url 'detail-report' report.pk %}" class="report-item">
               {{ report.month }} &middot; {{ report.contract }}
             </a>
           </h5>
@@ -39,6 +39,12 @@
         </div>
       </div>
       {% endfor %}
+    </div>
+    <div class="modal fade" id="report-modal" tabindex="-1" role="dialog" aria-labelledby="report-detail" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -57,6 +63,12 @@
     $('select').on('change', function () {
       $(this).closest('form').submit();
     });
+    $('.report-item').click(function(event) {
+      event.preventDefault();
+      $('#report-modal .modal-content').load($(this).attr('data-load'), function() {
+        $('#report-modal').modal('show');
+      });
+    });  
   })(jQuery)
 </script>
 {% endblock %}

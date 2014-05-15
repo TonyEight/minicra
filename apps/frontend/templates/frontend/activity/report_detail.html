@@ -1,98 +1,91 @@
-{% extends 'base.html' %}
 {% load minicra %}
-
-{% block page-title %}{{ object }}{% endblock %}
-
-{% block title %}
-<h3 class="muted">
-  {{ object }}
-  <a href="{{ return_link }}" class="btn btn-info btn-sm pull-right">
-    <i class="fa fa-chevron-left"></i> 
-    Return to my reports
-  </a>
-</h3>
-{% endblock %}
-
-{% block content %}
-<div class="row">
-  <div class="col-md-6">
-    <ul class="list-group">
-      <li class="list-group-item">
-        <h5 class="list-group-item-heading"><strong>{{ report.contract.client.organisation }}</strong></h5>
-        <em class="list-group-item-text">{{ report.contract.client }}</em>
-        <p class="list-group-item-text">
-        {% if report.contract.project %}
-        {{ report.contract.project }}: 
-        {% endif %}
-        {{ report.contract.mission }}
-        </p>
-      </li>
-    </ul>
+<div class="modal-header">
+  <h4 class="modal-title" id="offday-create-form">
+    <i class="fa fa-calendar-o"></i> {{ report }}
+  </h4>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <h5 class="list-group-item-heading"><strong>{{ report.contract.client.organisation }}</strong></h5>
+          <em class="list-group-item-text">{{ report.contract.client }}</em>
+          <p class="list-group-item-text">
+          {% if report.contract.project %}
+          {{ report.contract.project }}: 
+          {% endif %}
+          {{ report.contract.mission }}
+          </p>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-6">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <p class="list-group-item-text"><span class="label label-primary">{{ report.month.worked_days }}</span> worked day{{ report.month.worked_days|pluralize }}</p>
+          <p class="list-group-item-text"><span class="label label-primary">{{ report.days_with_activity|default_if_none:'0'|beautify }}</span> day{{ report.days_with_activity|default_if_none:'0'|beautify|pluralize }} with activity</p>
+          <p class="list-group-item-text"><span class="label label-primary">{{ report.off_days|default_if_none:'0'|beautify }}</span> off day{{ report.off_days|default_if_none:'0'|beautify|pluralize }}</p>
+          </p>
+        </li>
+      </ul>
+    </div>
   </div>
-  <div class="col-md-6">
-    <ul class="list-group">
-      <li class="list-group-item">
-        <p class="list-group-item-text"><span class="label label-primary">{{ report.month.worked_days }}</span> worked day{{ report.month.worked_days|pluralize }}</p>
-        <p class="list-group-item-text"><span class="label label-primary">{{ report.days_with_activity|default_if_none:'0'|beautify }}</span> day{{ report.days_with_activity|default_if_none:'0'|beautify|pluralize }} with activity</p>
-        <p class="list-group-item-text"><span class="label label-primary">{{ report.off_days|default_if_none:'0'|beautify }}</span> off day{{ report.off_days|default_if_none:'0'|beautify|pluralize }}</p>
-        </p>
-      </li>
-    </ul>
+  <div class="row">
+    <div class="col-md-12">
+      <table class="report-dates table table-condensed table-bordered">
+        <thead>
+          <tr>
+            <th class="col-md-2 hidden-xs">Week Day</th>
+            <th class="col-xs-4 col-md-2">Date</th>
+            <th class="col-xs-4 col-md-2">Morning</th>
+            <th class="col-xs-4 col-md-2">Afternoon</th>
+            <th class="col-md-4 hidden-xs">Comment</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in dates %}
+          <tr{% if d.date.1 == 5 or d.date.1 == 6 %} class="weekend"{% endif %}>
+            <td class="col-md-2 hidden-xs">{{ d.date.2 }}</td>
+            <td class="col-xs-4 col-md-2">{{ d.date.0 }}</td>
+            <td class="col-xs-4 col-md-2">
+              {% if d.activity.period == 1 or d.activity.period == 3 %}
+              <span class="act fa fa-asterisk"></span>
+              {% endif %}
+              {% if d.offday.period == 1 or d.offday.period == 3 %}
+              <span class="off fa fa-asterisk"></span>
+              {% endif %}
+            </td>
+            <td class="col-xs-4 col-md-2">
+              {% if d.activity.period == 2 or d.activity.period == 3 %}
+              <span class="act fa fa-asterisk"></span>
+              {% endif %}
+              {% if d.offday.period == 2 or d.offday.period == 3 %}
+              <span class="off fa fa-asterisk"></span>
+              {% endif %}
+            </td>
+            <td class="col-md-4 hidden-xs">
+              {% if d.activity.comment %}
+              <strong>Comment for activity:</strong> {{ d.activity.comment }}
+              {% endif %}
+              {% if d.offday.comment %}
+              <strong>Comment for off day:</strong> {{ d.offday.comment }}
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <caption align="bottom" class="text-left">
+          <p class="legend">
+            <span class="off"><i class="fa fa-asterisk"></i> off days</span><br>
+            <span class="act"><i class="fa fa-asterisk"></i> days with activity</span><br>
+            <span class="weekend">weekends</span>
+          </p>
+        </caption>
+      </table>
+    </div>
   </div>
 </div>
-
-<div class="row">
-  <div class="col-md-12">
-    <table class="report-dates table table-condensed table-bordered">
-      <thead>
-        <tr>
-          <th class="col-md-2 hidden-xs">Week Day</th>
-          <th class="col-xs-4 col-md-2">Date</th>
-          <th class="col-xs-4 col-md-2">Morning</th>
-          <th class="col-xs-4 col-md-2">Afternoon</th>
-          <th class="col-md-4 hidden-xs">Comment</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for d in dates %}
-        <tr{% if d.date.1 == 5 or d.date.1 == 6 %} class="weekend"{% endif %}>
-          <td class="col-md-2 hidden-xs">{{ d.date.2 }}</td>
-          <td class="col-xs-4 col-md-2">{{ d.date.0 }}</td>
-          <td class="col-xs-4 col-md-2">
-            {% if d.activity.period == 1 or d.activity.period == 3 %}
-            <span class="act fa fa-asterisk"></span>
-            {% endif %}
-            {% if d.offday.period == 1 or d.offday.period == 3 %}
-            <span class="off fa fa-asterisk"></span>
-            {% endif %}
-          </td>
-          <td class="col-xs-4 col-md-2">
-            {% if d.activity.period == 2 or d.activity.period == 3 %}
-            <span class="act fa fa-asterisk"></span>
-            {% endif %}
-            {% if d.offday.period == 2 or d.offday.period == 3 %}
-            <span class="off fa fa-asterisk"></span>
-            {% endif %}
-          </td>
-          <td class="col-md-4 hidden-xs">
-            {% if d.activity.comment %}
-            <strong>Comment for activity:</strong> {{ d.activity.comment }}
-            {% endif %}
-            {% if d.offday.comment %}
-            <strong>Comment for off day:</strong> {{ d.offday.comment }}
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-      <caption align="bottom" class="text-left">
-        <p class="legend">
-          <span class="off"><i class="fa fa-asterisk"></i> off days</span><br>
-          <span class="act"><i class="fa fa-asterisk"></i> days with activity</span><br>
-          <span class="weekend">weekends</span>
-        </p>
-      </caption>
-    </table>
-  </div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 </div>
-{% endblock %}

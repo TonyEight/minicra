@@ -6,4 +6,4 @@ class ActivityConfig(AppConfig):
     verbose_name = 'Activity Management'
 
     def ready(self):
-    	from activity import signals
+        from activity import signals

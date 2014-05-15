@@ -1,5 +1,6 @@
 from minicra.settings.base import *
 
+
 WSGI_APPLICATION = 'minicra.wsgi.dev_application'
 
 INSTALLED_APPS += (

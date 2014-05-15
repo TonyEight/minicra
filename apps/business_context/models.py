@@ -5,22 +5,25 @@ from django.conf import settings
 
 class Organisation(models.Model):
     name = models.CharField(
-        max_length=200,
-        unique=True
+        max_length=200
+    )
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='organisations'
     )
 
     class Meta:
         verbose_name = _('Organisation')
         verbose_name_plural = _('Organisations')
+        unique_together = ('name', 'actor',)
 
     def __unicode__(self):
         return u'%s' % self.name
-    
+
 
 class Client(models.Model):
     name = models.CharField(
-        max_length=200,
-        unique=True
+        max_length=200
     )
     service = models.CharField(
         max_length=200,
@@ -30,23 +33,15 @@ class Client(models.Model):
     organisation = models.ForeignKey(
         Organisation
     )
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='clients'
+    )
 
     class Meta:
         verbose_name = _('Client')
         verbose_name_plural = _('Clients')
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-
-class Project(models.Model):
-    name = models.CharField(
-        max_length=260
-    )
-
-    class Meta:
-        verbose_name = _('Project')
-        verbose_name_plural = _('Projects')
+        unique_together = ('name', 'actor',)
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -57,10 +52,11 @@ class Contract(models.Model):
         max_length=260
     )
     description = models.TextField(
-        blank=True
+        blank=True,
+        null=True
     )
-    project = models.ForeignKey(
-        Project,
+    project = models.CharField(
+        max_length=260,
         blank=True,
         null=True
     )
@@ -92,4 +88,3 @@ class Contract(models.Model):
 
     def __unicode__(self):
         return u'%s - %s' % (self.client.organisation, self.mission)
-    

@@ -1,6 +1,7 @@
 import datetime
 from django.contrib.auth.models import AnonymousUser
 
+
 def display_user(request):
     user_display = ''
     user_display_short = ''

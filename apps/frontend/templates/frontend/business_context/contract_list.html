@@ -1,0 +1,21 @@
+{% if object_list %}
+<div class="list-group">
+  {% for contract in object_list %}
+  <a class="contract list-group-item" href="" data-update="{% url 'update-contract' contract.pk %}">
+    <em class="list-group-item-heading">{{ contract }}</em>
+  </a>
+  {% endfor %}
+</div>
+{% elif user_has_contracts %}
+<p>Nothing matched your search.</p>
+{% endif %}
+<script type="text/javascript">
+  (function($) {
+    $('.contract').click(function(event) {
+      event.preventDefault();
+      $('#contract-modal-form .modal-content').load($(this).attr('data-update'), function() {
+        $('#contract-modal-form').modal('show');
+      });
+    });
+  })(jQuery)
+</script>

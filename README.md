@@ -15,7 +15,6 @@ Source
 TODO
 ----
 
-* Make context per user
 * Add public holidays
 * Add Excel export feature
 * Add status on report (validated by actor, validated by client, etc.)

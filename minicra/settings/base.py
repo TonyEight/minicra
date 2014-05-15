@@ -52,7 +52,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'braces',
     'django_filters',
-    'context',
+    'business_context',
     'activity',
     'frontend',
 )

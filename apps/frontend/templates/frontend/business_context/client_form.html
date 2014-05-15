@@ -1,0 +1,86 @@
+<form id="client-form" method="post" action="{% if object.pk %}{% url 'update-client' object.pk %}{% else %}{% url 'create-client' %}{% endif %}">
+  <div class="modal-header">
+    <h4 class="modal-title" id="client-create-form">
+      <i class="fa fa-male"></i> {% if object.pk %}Edit{% else %}Add{% endif %} client
+    </h4>
+  </div>
+  <div class="modal-body">
+    <div class="alert alert-danger form-errors"></div>
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="row form-group">
+      <label for="{{ field.id_for_label }}" class="hidden-xs col-md-2 control-label">
+        {{ field.label }}:
+      </label>
+      <div class="col-md-10">
+        {{ field }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="submit" class="btn btn-primary">{% if object.pk %}Save changes{% else %}Add{% endif %}</button>
+    {% if object.pk %}
+    <button type="button" id="delete-button" class="btn btn-danger pull-left">Delete this client</button>
+    {% endif %}
+  </div>
+</form>
+{% if object.pk %}
+<form action="{% url 'delete-client' object.pk %}" method="post" id="client-delete-form">
+  {% csrf_token %}
+</form>
+{% endif %}
+<script type="text/javascript">
+  $('.form-errors').hide();
+  (function($) {
+    $('#delete-button').click(function() {
+      $('#client-delete-form').submit();
+    });
+    $('#client-delete-form').on('submit', function(event) {
+      var $form = $(this);
+      $.ajax({
+        type: $form.attr('method'),
+        url: $form.attr('action'),
+        data: $form.serialize(),
+        success: function(data, status) {
+          loadItems();
+          $form.closest('.modal').modal('toggle');
+        }
+      });
+      event.preventDefault();
+    });
+    $('#client-form').on('submit', function(event) {
+      $('.form-errors').empty();
+      $('.form-errors').hide();
+      var $form = $(this);
+      $.ajax({
+        type: $form.attr('method'),
+        url: $form.attr('action'),
+        data: $form.serialize(),
+        success: function(data, status) {
+          loadItems();
+          $form.closest('.modal').modal('toggle');
+        },
+        error: function(data, status) {
+          if(status != 400 && status != 500) {
+            var errors = $.parseJSON(data.responseText);
+            errors_string = '<ul class="list-unstyled">';
+            for(key in errors) {
+              errors_string += '<li><span class="glyphicon glyphicon-exclamation-sign"></span> ' + key + ' - ' + errors[key] + '</li>'
+            }
+            errors_string += '</ul>';
+            $('.form-errors').append('This form presents some error(s):');
+            $('.form-errors').append(errors_string);
+            $('.form-errors').show();
+          }
+          else {
+            $('.form-errors').append('For some reason, the action could not be performed. Please try again or try reconnect.');
+            $('.form-errors').show();
+          }
+        },
+      });
+      event.preventDefault();
+    });
+  })(jQuery)
+</script>
