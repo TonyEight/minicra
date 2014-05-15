@@ -118,7 +118,7 @@ class ListClientView(LoginRequiredMixin, FilterView):
 
 
 class CreateClientView(LoginRequiredMixin,
-                             AjaxableResponseMixin, CreateView):
+                       AjaxableResponseMixin, CreateView):
     model = Client
     template_name = 'frontend/business_context/client_form.html'
     form_class = ClientForm
@@ -139,7 +139,7 @@ class CreateClientView(LoginRequiredMixin,
 
 
 class UpdateClientView(LoginRequiredMixin,
-                             AjaxableResponseMixin, UpdateView):
+                       AjaxableResponseMixin, UpdateView):
     model = Client
     template_name = 'frontend/business_context/client_form.html'
     form_class = ClientForm
@@ -156,7 +156,7 @@ class UpdateClientView(LoginRequiredMixin,
 
 
 class DeleteClientView(LoginRequiredMixin,
-                             AjaxableResponseMixin, DeleteView):
+                       AjaxableResponseMixin, DeleteView):
     model = Client
 
     def get_success_url(self):
@@ -181,7 +181,7 @@ class ListContractView(LoginRequiredMixin, FilterView):
 
 
 class CreateContractView(LoginRequiredMixin,
-                             AjaxableResponseMixin, CreateView):
+                         AjaxableResponseMixin, CreateView):
     model = Contract
     template_name = 'frontend/business_context/contract_form.html'
     form_class = ContractForm
@@ -202,7 +202,7 @@ class CreateContractView(LoginRequiredMixin,
 
 
 class UpdateContractView(LoginRequiredMixin,
-                             AjaxableResponseMixin, UpdateView):
+                         AjaxableResponseMixin, UpdateView):
     model = Contract
     template_name = 'frontend/business_context/contract_form.html'
     form_class = ContractForm
@@ -219,7 +219,7 @@ class UpdateContractView(LoginRequiredMixin,
 
 
 class DeleteContractView(LoginRequiredMixin,
-                             AjaxableResponseMixin, DeleteView):
+                         AjaxableResponseMixin, DeleteView):
     model = Contract
 
     def get_success_url(self):

@@ -15,9 +15,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Organisation',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                 serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=200)),
-                ('actor', models.ForeignKey(to=settings.AUTH_USER_MODEL, to_field='id')),
+                ('actor',
+                 models.ForeignKey(
+                     to=settings.AUTH_USER_MODEL, to_field='id')),
             ],
             options={
                 'unique_together': set([(b'name', b'actor')]),
