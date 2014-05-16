@@ -10,6 +10,7 @@ from django.views.generic import (
 )
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
+from django.db.models import Q
 from braces.views import LoginRequiredMixin
 from django_filters.views import FilterView
 from business_context.models import (

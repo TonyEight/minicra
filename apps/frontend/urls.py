@@ -32,6 +32,7 @@ from frontend.views.business_contexts import (
     DeleteContractView
 )
 
+
 urlpatterns = [
     url(
         r'^$',

@@ -2,6 +2,8 @@ import datetime
 import calendar
 from django import template
 from django.core.urlresolvers import reverse
+from django.db.models import Q
+from parameters.models import PublicHoliday
 
 register = template.Library()
 
@@ -34,9 +36,8 @@ def greetings(context):
 @register.inclusion_tag('frontend/extra/month_calendar.html',
                         takes_context=True)
 def month_calendar(context, year, month, calendar_id, with_year=True,
-                   today_css_class='today', with_off_days=True,
-                   off_css_class='off', with_activity=True,
-                   activity_css_class='act', noday_css_class='noday'):
+                   today_css_class='today', with_holidays=True,
+                   holidays_css_class='holiday', noday_css_class='noday'):
     today = datetime.date.today()
     if not year:
         year = today.year
@@ -56,38 +57,26 @@ def month_calendar(context, year, month, calendar_id, with_year=True,
         ),
         'calendar_id': calendar_id,
         'today_css_class': today_css_class,
-        'off_css_class': off_css_class,
-        'activity_css_class': activity_css_class,
+        'holidays_css_class': holidays_css_class,
         'noday_css_class': noday_css_class
     }
-    days_with_activity = []
-    days_off = []
-    if with_activity:
-        a = days_with_activity.append
-        user = context['user']
-        for c in user.contracts.all():
-            for d in c.declared_days.filter(
-                type=1,
-                date__month=month,
-                date__year=year
-            ):
-                a(d.date.day)
-    if with_off_days:
-        o = days_off.append
-        user = context['user']
-        for c in user.contracts.all():
-            for d in c.declared_days.filter(
-                type=2,
-                date__month=month,
-                date__year=year
-            ):
-                o(d.date.day)
+    holidays = []
+    holidays_list = []
+    if with_holidays:
+        h = holidays.append
+        holidays_list = PublicHoliday.objects.filter(
+            Q(month=month, year=year) |
+            Q(month=month, is_fixed=True)
+        )
+        for date in holidays_list:
+            h(date.day)
     if today.month == month and today.year == year:
         tag_context.update({
             'today': today.day
         })
     tag_context.update({
-        'days_with_activity': days_with_activity,
-        'days_off': days_off,
+        'year': year,
+        'holidays': holidays,
+        'holidays_list': holidays_list
     })
     return tag_context

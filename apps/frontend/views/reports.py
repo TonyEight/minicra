@@ -2,6 +2,7 @@ from frontend.views.base import *
 from frontend.filters import (
     ReportFilter
 )
+from parameters.models import PublicHoliday
 
 
 class ListReportView(LoginRequiredMixin, FilterView):
@@ -41,12 +42,6 @@ class DetailReportView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DetailReportView, self).get_context_data(**kwargs)
-        rq = self.request.GET
-        query = '?year=%s&month=%s&contract=%s' % (
-            rq.get('year', ''),
-            rq.get('month', ''),
-            rq.get('contract', '')
-        )
         month_dates = []
         for date in self.object.month.dates_list():
             act = None
@@ -76,8 +71,19 @@ class DetailReportView(LoginRequiredMixin, DetailView):
                 'activity': act,
                 'offday': off
             })
+        month_holidays = PublicHoliday.objects.filter(
+            Q(
+                month=self.object.month.month,
+                year=self.object.month.year
+            ) |
+            Q(
+                month=self.object.month.month,
+                is_fixed=True
+            )
+        ).values_list('day', flat=True)
+        print month_holidays
         context.update({
-            'return_link': reverse('list-report') + query,
-            'dates': month_dates
+            'dates': month_dates,
+            'month_holidays': month_holidays
         })
         return context

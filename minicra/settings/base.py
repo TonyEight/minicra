@@ -52,6 +52,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'braces',
     'django_filters',
+    'solo',
+    'parameters',
     'business_context',
     'activity',
     'frontend',

@@ -170,7 +170,7 @@ class ListContractView(LoginRequiredMixin, FilterView):
     def get_queryset(self):
         return Contract.objects.filter(
             actor=self.request.user
-        ).order_by('name')
+        ).order_by('mission')
 
     def get_context_data(self, **kwargs):
         context = super(ListContractView, self).get_context_data(**kwargs)

@@ -1,11 +1,12 @@
-{% load staticfiles minicra %}
+{% load staticfiles minicra solo_tags %}
+{% get_solo 'parameters.SiteConfig' as site_config %}
 <!DOCTYPE html>
-<html lang="en" {% block angular_module %}{% endblock %}>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MiniCRA &middot; {% block page-title %}{% endblock %}</title>
+    <title>{{ site_config.site_name }} &middot; {% block page-title %}{% endblock %}</title>
     <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
 
     <!-- Bootstrap -->
@@ -35,11 +36,11 @@
             <span class="icon-bar"></span>
           </button>
           {% endif %}
-          <a class="navbar-brand"><span class="glyphicon glyphicon-stats"></span> MiniCRA</a>
+          <a class="navbar-brand"><span class="{{ site_config.icon_CSS_class }}"></span> {{ site_config.site_name }}</a>
         </div>
 
         <!-- Header Content -->
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and not site_config.maintenance_mode %}
         <div class="collapse navbar-collapse" id="header-content">
           <ul class="nav navbar-nav navbar-right">
             <li class="{% active request 'dashboard' %}"><a href="{% url 'dashboard' %}">Dashdoard</a></li>

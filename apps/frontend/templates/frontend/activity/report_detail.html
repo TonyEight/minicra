@@ -45,7 +45,7 @@
         </thead>
         <tbody>
           {% for d in dates %}
-          <tr{% if d.date.1 == 5 or d.date.1 == 6 %} class="weekend"{% endif %}>
+          <tr class="{% if d.date.1 == 5 or d.date.1 == 6 %}weekend{% endif %} {% if d.date.0 in month_holidays %}holiday{% endif %}">
             <td class="col-md-2 hidden-xs">{{ d.date.2 }}</td>
             <td class="col-xs-4 col-md-2">{{ d.date.0 }}</td>
             <td class="col-xs-4 col-md-2">
@@ -79,7 +79,8 @@
           <p class="legend">
             <span class="off"><i class="fa fa-asterisk"></i> off days</span><br>
             <span class="act"><i class="fa fa-asterisk"></i> days with activity</span><br>
-            <span class="weekend">weekends</span>
+            <span class="weekend">weekends</span><br>
+            <span class="holiday">public holidays</span>
           </p>
         </caption>
       </table>

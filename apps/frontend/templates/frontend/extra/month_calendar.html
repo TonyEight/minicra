@@ -7,15 +7,19 @@
     {% for week in weeks %}
     <tr>
       {% for day in week %}
-        <td class="{% if day.0 == 0 %}{{ noday_css_class }}{% else %}{% if day.0 == today %}{{ today_css_class }} {% endif %}{% if day.0 in days_with_activity %}{{ activity_css_class }}{% elif day.0 in days_off %}{{ off_css_class }}{% endif %}{% endif %}">{% if day.0 != 0 %}{{ day.0 }}{% endif %}</td>
+        <td class="{% if day.0 == 0 %}{{ noday_css_class }}{% else %}{% if day.0 == today %}{{ today_css_class }} {% endif %}{% if day.0 in holidays %}{{ holidays_css_class }}{% endif %}{% endif %}">{% if day.0 != 0 %}{{ day.0 }}{% endif %}</td>
       {% endfor %}
     </tr>
     {% endfor %}
   </tbody>
-  {% if days_with_activity or days_off %}
+  {% if holidays_list %}
   <caption align="bottom">
-    <p class="col-md-6 {{ off_css_class }}">off</p>
-    <p class="col-md-6 {{ activity_css_class }}">activity</p>
+    <dl class="dl-horizontal">
+    {% for holiday in holidays_list %}
+      <dt class="text-info">{{ holiday.day|stringformat:".2d" }}/{{ holiday.month|stringformat:".2d" }}/{% if holiday.is_fixed %}{{ year }}{% else %}{{ holiday.year }}{% endif %}</dt>
+      <dd>{{ holiday.name }}</dd>
+    {% endfor %}
+    </dl>
   </caption>
   {% endif %}
 </table>
