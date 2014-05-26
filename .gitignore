@@ -8,3 +8,4 @@ include
 *.pyc
 *.sublime-*
 *.sqlite3
+docs/_build

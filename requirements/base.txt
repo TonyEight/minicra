@@ -2,3 +2,4 @@ git+https://github.com/django/django.git@stable/1.7.x
 django-braces
 git+https://github.com/alex/django-filter.git@develop
 git+https://github.com/lazybird/django-solo.git@master
+xlwt

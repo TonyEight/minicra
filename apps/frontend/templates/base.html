@@ -40,7 +40,7 @@
         </div>
 
         <!-- Header Content -->
-        {% if user.is_authenticated and not site_config.maintenance_mode %}
+        {% if user.is_authenticated %}
         <div class="collapse navbar-collapse" id="header-content">
           <ul class="nav navbar-nav navbar-right">
             <li class="{% active request 'dashboard' %}"><a href="{% url 'dashboard' %}">Dashdoard</a></li>

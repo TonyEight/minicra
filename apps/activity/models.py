@@ -1,12 +1,16 @@
+from __future__ import unicode_literals
 import datetime
 import calendar
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from business_context.models import Contract
+from parameters.models import PublicHoliday
+from activity.utils import generate_excel_report
 
 
 class DeclaredDay(models.Model):
+    """Stores a declared day on a contract."""
     PERIODS = (
         (1, 'Morning'),
         (2, 'Afternoon'),
@@ -27,46 +31,47 @@ class DeclaredDay(models.Model):
     )
     contract = models.ForeignKey(
         Contract,
-        related_name='declared_days'
+        related_name='declared_days',
     )
     comment = models.TextField(
         blank=True
     )
-
+    
     class Meta:
         verbose_name = _('Activity')
         verbose_name_plural = _('Activities')
         ordering = ('date', 'contract',)
 
     def _get_actor(self):
+        """Returns the actor defined in the related contract."""
         return self.contract.actor
     actor = property(_get_actor)
 
     def __unicode__(self):
-        return u'%s: %s (%s)' % (self.date, self.contract,
+        return '%s: %s (%s)' % (self.date, self.contract,
                                  self.get_period_display())
 
 
 class Month(models.Model):
+    """Stores a month of a year."""
     MONTHS = (
-        (1, calendar.month_name[1]),
-        (2, calendar.month_name[2]),
-        (3, calendar.month_name[3]),
-        (4, calendar.month_name[4]),
-        (5, calendar.month_name[5]),
-        (6, calendar.month_name[6]),
-        (7, calendar.month_name[7]),
-        (8, calendar.month_name[8]),
-        (9, calendar.month_name[9]),
-        (10, calendar.month_name[10]),
-        (11, calendar.month_name[11]),
-        (12, calendar.month_name[12]),
+        (1, unicode(calendar.month_name[1])),
+        (2, unicode(calendar.month_name[2])),
+        (3, unicode(calendar.month_name[3])),
+        (4, unicode(calendar.month_name[4])),
+        (5, unicode(calendar.month_name[5])),
+        (6, unicode(calendar.month_name[6])),
+        (7, unicode(calendar.month_name[7])),
+        (8, unicode(calendar.month_name[8])),
+        (9, unicode(calendar.month_name[9])),
+        (10, unicode(calendar.month_name[10])),
+        (11, unicode(calendar.month_name[11])),
+        (12, unicode(calendar.month_name[12])),
     )
     month = models.PositiveIntegerField(
         choices=MONTHS
     )
     year = models.PositiveIntegerField(default=datetime.datetime.now().year)
-    worked_days = models.PositiveIntegerField(editable=False, default=0)
 
     class Meta:
         verbose_name = _('Month')
@@ -74,7 +79,7 @@ class Month(models.Model):
         unique_together = ('month', 'year')
 
     def __unicode__(self):
-        return u'%s %s' % (self.get_month_display(), self.year)
+        return '%s %s' % (self.get_month_display(), self.year)
 
     def dates_list(self):
         c = calendar.Calendar()
@@ -84,17 +89,28 @@ class Month(models.Model):
                 dates.append((d[0], d[1], calendar.day_name[d[1]]))
         return dates
 
-    def save(self, *args, **kwargs):
+    def _get_holidays(self):
+        return PublicHoliday.objects.for_month(year=self.year, 
+                                               month=self.month)
+    holidays = property(_get_holidays)
+    
+    def _get_worked_days(self):
         c = calendar.Calendar()
-        weekdays = 0
+        worked_days = 0
         for d in c.itermonthdays2(self.year, self.month):
             if d[0] != 0 and d[1] not in [5, 6]:
-                weekdays += 1
-        self.worked_days = weekdays
+                if not self.holidays.filter(day=d[0]).exists():
+                    worked_days += 1
+        return worked_days
+    worked_days = property(_get_worked_days)
+
+
+    def save(self, *args, **kwargs):
         super(Month, self).save(*args, **kwargs)
 
 
 class Report(models.Model):
+    """Stores an activity report."""
     off_days = models.FloatField(editable=False, default=0.0)
     days_with_activity = models.FloatField(editable=False, default=0.0)
     month = models.ForeignKey(
@@ -105,6 +121,11 @@ class Report(models.Model):
         Contract,
         related_name='activity_reports'
     )
+    excel_file = models.FileField(
+        editable=False,
+        blank=False,
+        null=True
+    )
 
     class Meta:
         verbose_name = _('Report')
@@ -112,7 +133,7 @@ class Report(models.Model):
         unique_together = ('contract', 'month')
 
     def __unicode__(self):
-        return u'Activity Report of %s' % (self.month)
+        return 'Activity Report of %s' % (self.month)
 
     @classmethod
     def get_reports_for(cls, user):
@@ -122,7 +143,10 @@ class Report(models.Model):
         return self.month.worked_days
     worked_days = property(_get_worked_days)
 
-    def save(self, *args, **kwargs):
+    def _generate_report(self):
+        generate_excel_report(self)
+
+    def _update_figures(self):
         c = calendar.Calendar()
         activities = 0
         for act in DeclaredDay.objects.filter(
@@ -148,4 +172,8 @@ class Report(models.Model):
             else:
                 off_days += 0.5
         self.off_days = off_days
+
+    def save(self, *args, **kwargs):
+        self._update_figures()
+        self._generate_report()
         super(Report, self).save(*args, **kwargs)

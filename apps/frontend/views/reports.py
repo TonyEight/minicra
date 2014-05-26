@@ -42,6 +42,9 @@ class DetailReportView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DetailReportView, self).get_context_data(**kwargs)
+        print self.object.excel_file.path
+        print self.object.excel_file.file
+        print self.object.excel_file.url
         month_dates = []
         for date in self.object.month.dates_list():
             act = None
