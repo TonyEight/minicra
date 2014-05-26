@@ -1,1 +1,1 @@
-web: gunicorn minicra.wsgi
+web: gunicorn minicra.wsgi-heroku
