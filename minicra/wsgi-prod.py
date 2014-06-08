@@ -7,7 +7,7 @@ https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/
 # Built-in modules
 import os
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crm.settings.prod")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "minicra.settings.prod")
 
 # Django modules
 from django.core.wsgi import get_wsgi_application
