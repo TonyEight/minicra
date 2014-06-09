@@ -8,7 +8,7 @@ import xlwt
 def generate_excel_report(report):
     report_name = 'report_%s_%d.xls' % (
         unicode(report.month.get_month_display()),
-        unicode(report.month.year),
+        report.month.year,
     )
     sub_path = 'reports/%s/%s/%s/%s' % (
         unicode(report.contract.actor),
