@@ -12,9 +12,9 @@ def generate_excel_report(report):
         report.month.year,
     )
     sub_path = 'reports/%s/%s/%s/%s' % (
-        slugify(report.contract.actor),
-        slugify(report.contract.client.organisation),
-        slugify(report.contract.client),
+        slugify(unicode(report.contract.actor)),
+        slugify(unicode(report.contract.client.organisation)),
+        slugify(unicode(report.contract.client)),
         report_name
     )
     file_name = os.path.join(settings.MEDIA_ROOT, sub_path)
