@@ -7,14 +7,14 @@ import xlwt
 
 def generate_excel_report(report):
     report_name = 'report_%s_%d.xls' % (
-        report.month.get_month_display(),
-        report.month.year
+        unicode(report.month.get_month_display()),
+        unicode(report.month.year),
     )
     sub_path = 'reports/%s/%s/%s/%s' % (
-        report.contract.actor,
-        report.contract.client.organisation,
-        report.contract.client,
-        report_name
+        unicode(report.contract.actor),
+        unicode(report.contract.client.organisation),
+        unicode(report.contract.client),
+        unicode(report_name)
     )
     file_name = os.path.join(settings.MEDIA_ROOT, sub_path)
     heading_xf = xlwt.easyxf('font: bold on; '
