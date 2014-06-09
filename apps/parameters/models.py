@@ -20,8 +20,8 @@ class NonFixedPublicHolidayManager(models.Manager):
 class PublicHolidayQuerySet(models.QuerySet):
     def for_month(self, month, year):
         return self.filter(
-            models.Q(month=month) |
-            models.Q(month=month, year=year)
+            models.Q(is_fixed=True, month=month) |
+            models.Q(is_fixed=False, month=month, year=year)
         )
 
 
