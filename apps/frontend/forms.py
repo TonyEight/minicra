@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from django import forms
 from business_context.models import (
     Organisation,
@@ -9,7 +10,24 @@ from activity.models import (
 )
 
 
-class OrganisationForm(forms.ModelForm):
+class BootstrapForm(forms.ModelForm):
+    # Documentation
+    __doc__ = _(u'A base custom ModelForm adding Boostrap '
+                u'CSS classes to the widgets.')
+
+    # Methods
+    def __init__(self, *args, **kwargs):
+        super(BootstrapForm, self).__init__(*args, **kwargs)
+        # we iterate through all fields of the form
+        for name, field in self.fields.items():
+            # we set the Bootstrap CSS class
+            if field.widget.attrs.has_key('class'):
+                field.widget.attrs['class'] += ' form-control'
+            else:
+                field.widget.attrs.update({'class':'form-control'})
+
+
+class OrganisationForm(BootstrapForm):
 
     class Meta:
         model = Organisation
@@ -17,7 +35,7 @@ class OrganisationForm(forms.ModelForm):
         exclude = ('actor',)
 
 
-class ClientForm(forms.ModelForm):
+class ClientForm(BootstrapForm):
 
     class Meta:
         model = Client
@@ -25,7 +43,7 @@ class ClientForm(forms.ModelForm):
         exclude = ('actor',)
 
 
-class ContractForm(forms.ModelForm):
+class ContractForm(BootstrapForm):
 
     class Meta:
         model = Contract
@@ -33,7 +51,7 @@ class ContractForm(forms.ModelForm):
         exclude = ('actor',)
 
 
-class DeclaredDayForm(forms.ModelForm):
+class DeclaredDayForm(BootstrapForm):
 
     class Meta:
         model = DeclaredDay

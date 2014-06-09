@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from solo.models import SingletonModel
@@ -33,15 +34,15 @@ class PublicHoliday(models.Model):
     nonfixed_objects = NonFixedPublicHolidayManager()
 
     class Meta:
-        verbose_name = _('Fixed Public Holiday')
-        verbose_name_plural = _('Fixed Public Holidays')
+        verbose_name = _('Public Holiday')
+        verbose_name_plural = _('Public Holidays')
         ordering = ('is_fixed', 'year', 'month', 'day',)
 
     def __unicode__(self):
-        year = u''
+        year = ''
         if self.year:
-            year = u'/%.2d' % self.year
-        return u'%s (%.2d/%.2d%s)' % (self.name, self.day, self.month, year)
+            year = '/%.2d' % self.year
+        return '%s (%.2d/%.2d%s)' % (self.name, self.day, self.month, year)
 
 
 class SiteConfig(SingletonModel):
@@ -54,4 +55,4 @@ class SiteConfig(SingletonModel):
         verbose_name_plural = 'Site Configuration'
 
     def __unicode__(self):
-        return u'Site Configuration'
+        return 'Site Configuration'

@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -18,7 +19,7 @@ class Organisation(models.Model):
         unique_together = ('name', 'actor',)
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return '%s' % self.name
 
 
 class Client(models.Model):
@@ -44,7 +45,7 @@ class Client(models.Model):
         unique_together = ('name', 'actor',)
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return '%s' % self.name
 
 
 class Contract(models.Model):
@@ -87,4 +88,4 @@ class Contract(models.Model):
         verbose_name_plural = _('Contracts')
 
     def __unicode__(self):
-        return u'%s - %s' % (self.client.organisation, self.mission)
+        return '%s - %s' % (self.client.organisation, self.mission)

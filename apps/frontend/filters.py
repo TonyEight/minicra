@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import datetime
 import django_filters
 from business_context.models import (

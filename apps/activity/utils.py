@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import os
 from django.conf import settings
 from django.core.files import File
@@ -5,11 +6,11 @@ import xlwt
 
 
 def generate_excel_report(report):
-    report_name = u'report_%s_%d.xls' % (
+    report_name = 'report_%s_%d.xls' % (
         report.month.get_month_display(),
         report.month.year
     )
-    sub_path = u'reports/%s/%s/%s/%s' % (
+    sub_path = 'reports/%s/%s/%s/%s' % (
         report.contract.actor,
         report.contract.client.organisation,
         report.contract.client,
@@ -46,10 +47,10 @@ def generate_excel_report(report):
     sheet.write(5, 3, 'Public holidays', heading_xf)
     sheet.write(5, 4, report.off_days, heading_content_xf)
     directory = '/'.join(file_name.split('/')[:-1])
-    if not os.path.exists(directory):
+    if not os.path.exists(directory.decode(settings.FS_ENCODING)):
         os.makedirs(directory)
-    if os.path.isfile(file_name):
+    if os.path.isfile(file_name.decode(settings.FS_ENCODING)):
         os.remove(file_name)
     book.save(file_name)
-    if os.path.isfile(file_name):
+    if os.path.isfile(file_name.decode(settings.FS_ENCODING)):
         report.excel_file.save(report_name, File(open(file_name)), save=False)
