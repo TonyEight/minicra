@@ -18,8 +18,13 @@ class NonFixedPublicHolidayManager(models.Manager):
 
 class PublicHolidayManager(models.Manager):
     def for_month(self, month, year):
-        return self.model.fixed_objects.filter(month=month) |\
-               self.model.nonfixed_objects.filter(month=month, year=year)
+        total = []
+        for holiday in self.model.fixed_objects.filter(month=month):
+            total.append(holiday)
+        for holiday in self.model.nonfixed_objects.filter(month=month, 
+                                                          year=year):
+            total.append(holiday)
+        return total
 
 
 class PublicHoliday(models.Model):
