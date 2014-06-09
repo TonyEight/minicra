@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import os
 from django.conf import settings
 from django.core.files import File
+from django.utils.text import slugify
 import xlwt
 
 
@@ -11,10 +12,10 @@ def generate_excel_report(report):
         report.month.year,
     )
     sub_path = 'reports/%s/%s/%s/%s' % (
-        unicode(report.contract.actor),
-        unicode(report.contract.client.organisation),
-        unicode(report.contract.client),
-        unicode(report_name)
+        slugify(report.contract.actor),
+        slugify(report.contract.client.organisation),
+        slugify(report.contract.client),
+        report_name
     )
     file_name = os.path.join(settings.MEDIA_ROOT, sub_path)
     heading_xf = xlwt.easyxf('font: bold on; '
