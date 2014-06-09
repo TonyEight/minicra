@@ -16,15 +16,21 @@ class NonFixedPublicHolidayManager(models.Manager):
                                                         .filter(
                                                             is_fixed=False)
 
-class PublicHolidayManager(models.Manager):
+
+class PublicHolidayQuerySet(models.QuerySet):
     def for_month(self, month, year):
-        total = []
-        for holiday in self.model.fixed_objects.filter(month=month):
-            total.append(holiday)
-        for holiday in self.model.nonfixed_objects.filter(month=month, 
-                                                          year=year):
-            total.append(holiday)
-        return total
+        return self.filter(
+            models.Q(month=month) |
+            models.Q(month=month, year=year)
+        )
+
+
+class PublicHolidayManager(models.Manager):
+    def get_queryset(self):
+        return PublicHolidayQuerySet(self.model, using=self._db)
+
+    def for_month(self, month, year):
+        return self.get_queryset().for_month(month=month, year=year)
 
 
 class PublicHoliday(models.Model):
