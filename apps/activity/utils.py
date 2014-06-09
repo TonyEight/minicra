@@ -55,4 +55,3 @@ def generate_excel_report(report):
     book.save(file_name)
     if os.path.isfile(file_name.decode(settings.FS_ENCODING)):
         report.excel_file = file_name
-        report.save()

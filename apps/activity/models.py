@@ -105,10 +105,6 @@ class Month(models.Model):
     worked_days = property(_get_worked_days)
 
 
-    def save(self, *args, **kwargs):
-        super(Month, self).save(*args, **kwargs)
-
-
 class Report(models.Model):
     """Stores an activity report."""
     off_days = models.FloatField(editable=False, default=0.0)
