@@ -11,10 +11,6 @@ from activity.models import (
 
 
 class BootstrapForm(forms.ModelForm):
-    # Documentation
-    __doc__ = _(u'A base custom ModelForm adding Boostrap '
-                u'CSS classes to the widgets.')
-
     # Methods
     def __init__(self, *args, **kwargs):
         super(BootstrapForm, self).__init__(*args, **kwargs)
