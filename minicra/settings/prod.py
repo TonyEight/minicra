@@ -7,4 +7,4 @@ ALLOWED_HOSTS = [
     'minicra.diff-air.com',
 ]
 
-WSGI_APPLICATION = 'minicra.wsgi.prod_application'
+WSGI_APPLICATION = 'minicra.wsgi-prod.application'
