@@ -5,7 +5,7 @@ Description
 -----------
 
 A mini Django project to manage activity reports per user.
-Built with Django 1.7b3
+Built with Django 1.7.3
 
 Source
 ------
@@ -15,6 +15,7 @@ Source
 TODO
 ----
 
+* Improve days declaration
 * Add Excel export feature
 * Add status on report (validated by actor, validated by client, etc.)
 * Add signature feature
